@@ -1,0 +1,2419 @@
+<!DOCTYPE html>
+<html lang="bg" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-City Explorer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           CSS VARIABLES & THEME SYSTEM
+        ============================================================ */
+        :root {
+            --bg-primary: #f0f4ee;
+            --bg-secondary: #e4ede0;
+            --bg-card: #ffffff;
+            --bg-overlay: rgba(240, 244, 238, 0.92);
+            --text-primary: #1a2e1a;
+            --text-secondary: #3d5a3d;
+            --text-muted: #6b876b;
+            --accent-green: #2d7a2d;
+            --accent-lime: #7ab648;
+            --accent-gold: #c8a84b;
+            --accent-teal: #2a8c7a;
+            --accent-rust: #b85a2a;
+            --border-color: rgba(45, 122, 45, 0.18);
+            --shadow-sm: 0 2px 12px rgba(45, 122, 45, 0.08);
+            --shadow-md: 0 8px 32px rgba(45, 122, 45, 0.14);
+            --shadow-lg: 0 20px 60px rgba(45, 122, 45, 0.2);
+            --header-bg: rgba(240, 244, 238, 0.95);
+            --stat-bar-bg: rgba(45, 122, 45, 0.12);
+            --zone-hover: rgba(45, 122, 45, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0a160a;
+            --bg-secondary: #0f1f0f;
+            --bg-card: #121e12;
+            --bg-overlay: rgba(10, 22, 10, 0.94);
+            --text-primary: #d4e8c8;
+            --text-secondary: #8fb87e;
+            --text-muted: #5a7a52;
+            --accent-green: #4aaf4a;
+            --accent-lime: #8fd455;
+            --accent-gold: #d4b45e;
+            --accent-teal: #3ab89e;
+            --accent-rust: #d47044;
+            --border-color: rgba(74, 175, 74, 0.2);
+            --shadow-sm: 0 2px 12px rgba(0,0,0,0.4);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.5);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+            --header-bg: rgba(10, 22, 10, 0.97);
+            --stat-bar-bg: rgba(74, 175, 74, 0.15);
+            --zone-hover: rgba(74, 175, 74, 0.08);
+        }
+
+        /* ============================================================
+           RESET & BASE
+        ============================================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        /* Organic background texture */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(45,122,45,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(42,140,122,0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(200,168,75,0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ============================================================
+           HEADER / NAVIGATION
+        ============================================================ */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--header-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s ease;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--accent-green);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-leaf {
+            width: 28px;
+            height: 28px;
+            display: inline-block;
+        }
+
+        .logo-leaf svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        nav#nav {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        nav#nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem 0.875rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+            letter-spacing: 0.01em;
+        }
+
+        nav#nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--accent-lime);
+            border-radius: 2px;
+            transition: width 0.25s ease;
+        }
+
+        nav#nav a:hover {
+            color: var(--accent-green);
+            background: var(--zone-hover);
+        }
+
+        nav#nav a:hover::after {
+            width: 60%;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Eco-Mode Toggle */
+        .eco-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.4rem 0.875rem;
+            border-radius: 24px;
+            border: 1.5px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .eco-toggle:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: var(--zone-hover);
+        }
+
+        .eco-toggle-indicator {
+            width: 32px;
+            height: 18px;
+            border-radius: 9px;
+            background: var(--stat-bar-bg);
+            position: relative;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .eco-toggle-indicator::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .eco-toggle-indicator {
+            background: var(--accent-green);
+        }
+
+        [data-theme="dark"] .eco-toggle-indicator::after {
+            left: 17px;
+            background: var(--bg-primary);
+        }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            background: none;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.4rem 0.6rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1;
+            transition: all 0.2s ease;
+        }
+
+        .hamburger:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        /* ============================================================
+           HERO / BANNER SECTION
+        ============================================================ */
+        .banner {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 68px;
+        }
+
+        /* Animated organic background */
+        .banner-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 80% at 10% 90%, rgba(42,140,122,0.25) 0%, transparent 55%),
+                radial-gradient(ellipse 60% 60% at 90% 10%, rgba(45,122,45,0.2) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 50% at 50% 50%, rgba(200,168,75,0.08) 0%, transparent 60%);
+            animation: breathe 8s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.02); }
+        }
+
+        /* Floating particles */
+        .banner-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent-lime);
+            opacity: 0;
+            animation: float-up linear infinite;
+        }
+
+        @keyframes float-up {
+            0% { opacity: 0; transform: translateY(0) scale(0.5); }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.3; }
+            100% { opacity: 0; transform: translateY(-120px) scale(1.5); }
+        }
+
+        .banner-overlay {
+            display: none;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 780px;
+            padding: 2rem;
+            animation: fade-in-up 0.9s ease both;
+        }
+
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(32px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .banner-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 0.35rem 1rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-teal);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            animation: fade-in-up 0.9s 0.1s ease both;
+        }
+
+        .banner-eyebrow-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-lime);
+            animation: pulse-dot 2s ease infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.7; }
+        }
+
+        .banner-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+            margin-bottom: 1.25rem;
+            animation: fade-in-up 0.9s 0.2s ease both;
+        }
+
+        .banner-content h1 .highlight {
+            color: var(--accent-green);
+            position: relative;
+            display: inline-block;
+        }
+
+        .banner-content h1 .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--accent-lime);
+            opacity: 0.3;
+            border-radius: 3px;
+            transform: skewX(-4deg);
+        }
+
+        .banner-content p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto 2.5rem;
+            font-weight: 400;
+            line-height: 1.7;
+            animation: fade-in-up 0.9s 0.3s ease both;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 0.95rem 2.25rem;
+            border-radius: 50px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(45,122,45,0.35), 0 2px 6px rgba(45,122,45,0.2);
+            transition: all 0.25s ease;
+            letter-spacing: 0.01em;
+            animation: fade-in-up 0.9s 0.4s ease both;
+        }
+
+        .cta-button svg {
+            transition: transform 0.25s ease;
+        }
+
+        .cta-button:hover {
+            background: var(--accent-lime);
+            box-shadow: 0 12px 32px rgba(122,182,72,0.4), 0 2px 8px rgba(122,182,72,0.3);
+            transform: translateY(-2px);
+        }
+
+        .cta-button:hover svg {
+            transform: translateX(4px);
+        }
+
+        .cta-button:active {
+            transform: translateY(0);
+        }
+
+        /* Scroll hint */
+        .scroll-hint {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            animation: fade-in-up 1s 1s ease both;
+        }
+
+        .scroll-arrow {
+            width: 28px;
+            height: 44px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 6px;
+        }
+
+        .scroll-arrow::after {
+            content: '';
+            width: 4px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            animation: scroll-bounce 1.8s ease infinite;
+        }
+
+        @keyframes scroll-bounce {
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            60% { transform: translateY(10px); opacity: 0.3; }
+        }
+
+        /* ============================================================
+           SECTION SHARED STYLES
+        ============================================================ */
+        section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 0.75rem;
+        }
+
+        .section-label::before {
+            content: '';
+            width: 24px;
+            height: 1.5px;
+            background: var(--accent-teal);
+            border-radius: 2px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 540px;
+            line-height: 1.65;
+        }
+
+        /* ============================================================
+           CITY OVERVIEW — STATS
+        ============================================================ */
+        .overview {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .overview .section-container {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.75rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .stat-card:nth-child(1)::before { background: var(--accent-lime); }
+        .stat-card:nth-child(2)::before { background: var(--accent-teal); }
+        .stat-card:nth-child(3)::before { background: var(--accent-gold); }
+        .stat-card:nth-child(4)::before { background: var(--accent-rust); }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--stat-bar-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .stat-card h3 {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-value .unit {
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-left: 0.25rem;
+        }
+
+        .stat-bar-wrap {
+            height: 6px;
+            background: var(--stat-bar-bg);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .stat-bar {
+            height: 100%;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 1.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .stat-card:nth-child(1) .stat-bar { background: var(--accent-lime); }
+        .stat-card:nth-child(2) .stat-bar { background: var(--accent-teal); }
+        .stat-card:nth-child(3) .stat-bar { background: var(--accent-gold); }
+        .stat-card:nth-child(4) .stat-bar { background: var(--accent-rust); }
+
+        .stat-delta {
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-delta.up { color: var(--accent-lime); }
+        .stat-delta.down { color: var(--accent-rust); }
+
+        /* ============================================================
+           CITY MAP — INTERACTIVE GRID
+        ============================================================ */
+        .city-map {
+            padding: 5rem 0;
+        }
+
+        .city-map .section-container {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .map-header {
+            margin-bottom: 3rem;
+        }
+
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+
+        .map-zone {
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.75rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .map-zone::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 20px;
+        }
+
+        .zone-solar::before { background: radial-gradient(circle at 30% 30%, rgba(200,168,75,0.12), transparent 70%); }
+        .zone-forest::before { background: radial-gradient(circle at 30% 30%, rgba(45,122,45,0.12), transparent 70%); }
+        .zone-water::before { background: radial-gradient(circle at 30% 30%, rgba(42,140,122,0.12), transparent 70%); }
+        .zone-recycling::before { background: radial-gradient(circle at 30% 30%, rgba(122,182,72,0.12), transparent 70%); }
+        .zone-transport::before { background: radial-gradient(circle at 30% 30%, rgba(42,140,122,0.1), transparent 70%); }
+        .zone-gardens::before { background: radial-gradient(circle at 30% 30%, rgba(45,122,45,0.1), transparent 70%); }
+
+        .map-zone:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: var(--shadow-md);
+            border-color: transparent;
+        }
+
+        .map-zone:hover::before { opacity: 1; }
+
+        .map-zone.explored {
+            border-color: var(--accent-lime);
+            box-shadow: 0 0 0 1px var(--accent-lime), var(--shadow-sm);
+        }
+
+        .zone-icon-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .map-zone:hover .zone-icon-wrap {
+            transform: scale(1.1) rotate(-4deg);
+        }
+
+        .zone-solar .zone-icon-wrap { background: rgba(200,168,75,0.15); }
+        .zone-forest .zone-icon-wrap { background: rgba(45,122,45,0.15); }
+        .zone-water .zone-icon-wrap { background: rgba(42,140,122,0.15); }
+        .zone-recycling .zone-icon-wrap { background: rgba(122,182,72,0.15); }
+        .zone-transport .zone-icon-wrap { background: rgba(42,140,122,0.12); }
+        .zone-gardens .zone-icon-wrap { background: rgba(45,122,45,0.12); }
+
+        .zone-icon-wrap svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .zone-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.01em;
+        }
+
+        .zone-tagline {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .zone-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent-lime);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zone-badge svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .map-zone.explored .zone-badge {
+            display: flex;
+        }
+
+        /* ============================================================
+           MODAL
+        ============================================================ */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 22, 10, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            animation: modal-fade-in 0.2s ease;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        @keyframes modal-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            max-width: 560px;
+            width: 100%;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            animation: modal-slide-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        @keyframes modal-slide-in {
+            from { opacity: 0; transform: scale(0.88) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border-color);
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            border-color: var(--accent-rust);
+            color: var(--accent-rust);
+            background: rgba(184,90,42,0.08);
+        }
+
+        .modal-zone-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-zone-icon svg { width: 30px; height: 30px; }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .modal-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-facts {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .modal-facts h4 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-facts ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .modal-facts li {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            padding-left: 1.25rem;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .modal-facts li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.55em;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-lime);
+        }
+
+        .modal-explore-btn {
+            width: 100%;
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 0.9rem 1.5rem;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .modal-explore-btn:hover {
+            background: var(--accent-lime);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(122,182,72,0.35);
+        }
+
+        .modal-explore-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ============================================================
+           GREEN DIARY
+        ============================================================ */
+        .green-diary {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .diary-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .diary-progress-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem 1.75rem;
+            min-width: 220px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .diary-progress-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .diary-progress-track {
+            height: 8px;
+            background: var(--stat-bar-bg);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .diary-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-lime));
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .diary-progress-text {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .diary-filter {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.4rem 0.875rem;
+            border-radius: 24px;
+            border: 1.5px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #fff;
+        }
+
+        .diary-badges {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .badge-card {
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.25s ease;
+            opacity: 0.45;
+            filter: grayscale(60%);
+        }
+
+        .badge-card.unlocked {
+            opacity: 1;
+            filter: none;
+            border-color: var(--accent-lime);
+            box-shadow: 0 0 0 1px rgba(122,182,72,0.3), var(--shadow-sm);
+            animation: badge-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes badge-pop {
+            from { transform: scale(0.8); }
+            to { transform: scale(1); }
+        }
+
+        .badge-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .badge-icon svg { width: 22px; height: 22px; }
+
+        .badge-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .badge-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .badge-card.unlocked .badge-status {
+            color: var(--accent-lime);
+        }
+
+        /* Empty diary state */
+        .diary-empty {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            display: none;
+        }
+
+        .diary-empty.visible {
+            display: block;
+        }
+
+        /* ============================================================
+           ECO-TIPS / VIDEOS
+        ============================================================ */
+        .eco-tips-section {
+            padding: 5rem 0;
+        }
+
+        .video-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .video-tab {
+            padding: 0.5rem 1.125rem;
+            border-radius: 24px;
+            border: 1.5px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.22s ease;
+        }
+
+        .video-tab:hover, .video-tab.active {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #fff;
+        }
+
+        .video-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.75rem;
+            align-items: start;
+        }
+
+        .video-main {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .video-iframe-wrap {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-iframe-wrap iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .video-info {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .video-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
+        }
+
+        .video-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .video-playlist {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .playlist-item {
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            display: flex;
+            gap: 0.875rem;
+            align-items: center;
+        }
+
+        .playlist-item:hover {
+            border-color: var(--accent-green);
+            background: var(--zone-hover);
+        }
+
+        .playlist-item.active {
+            border-color: var(--accent-lime);
+            background: var(--zone-hover);
+        }
+
+        .playlist-thumb {
+            width: 52px;
+            height: 38px;
+            border-radius: 8px;
+            background: var(--stat-bar-bg);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .playlist-thumb svg { width: 16px; height: 16px; color: var(--accent-green); }
+
+        .playlist-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .playlist-dur {
+            font-size: 0.73rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* ============================================================
+           FOOTER
+        ============================================================ */
+        .app-footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: var(--accent-green);
+        }
+
+        .footer-copy {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.25rem;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-green);
+        }
+
+        /* ============================================================
+           NOTIFICATION TOAST
+        ============================================================ */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-lime);
+            border-radius: 12px;
+            padding: 0.875rem 1.25rem;
+            box-shadow: var(--shadow-md);
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            max-width: 300px;
+            animation: toast-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: auto;
+        }
+
+        @keyframes toast-in {
+            from { opacity: 0; transform: translateX(40px) scale(0.9); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        .toast.fade-out {
+            animation: toast-out 0.3s ease forwards;
+        }
+
+        @keyframes toast-out {
+            to { opacity: 0; transform: translateX(40px); }
+        }
+
+        .toast-title {
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 0.2rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+        @media (max-width: 960px) {
+            .map-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .video-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .video-playlist {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .playlist-item {
+                flex: 1 1 calc(50% - 0.375rem);
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav#nav {
+                position: absolute;
+                top: 68px;
+                left: 0;
+                right: 0;
+                background: var(--header-bg);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border-bottom: 1px solid var(--border-color);
+                flex-direction: column;
+                padding: 1rem;
+                gap: 0.25rem;
+                display: none;
+            }
+
+            nav#nav.active {
+                display: flex;
+            }
+
+            nav#nav a {
+                width: 100%;
+                text-align: center;
+                padding: 0.75rem 1rem;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .app-header {
+                padding: 0 1.25rem;
+            }
+
+            .section-container {
+                padding: 3.5rem 1.25rem;
+            }
+
+            .map-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .diary-header {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .banner-content h1 {
+                font-size: 2.4rem;
+            }
+
+            .modal {
+                padding: 1.75rem 1.25rem;
+            }
+
+            .playlist-item {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+    ============================================================ -->
+    <header class="app-header">
+        <div class="logo">
+            <span class="logo-leaf">
+                <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 24C4 24 7 14 14 8C21 2 24 4 24 4C24 4 22 14 15 20C10 24 4 24 4 24Z" fill="#2d7a2d"/>
+                    <path d="M4 24L14 14" stroke="#7ab648" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </span>
+            EcoExplorer
+        </div>
+
+        <nav id="nav">
+            <a href="#map">Explore</a>
+            <a href="#map">City Map</a>
+            <a href="#diary">Green Diary</a>
+            <a href="#tips">Resources</a>
+        </nav>
+
+        <div class="header-actions">
+            <button class="eco-toggle" id="eco-toggle" title="Eco Mode - Тъмна тема">
+                <span class="eco-toggle-indicator" id="eco-indicator"></span>
+                Eco Mode
+            </button>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">&#9776;</button>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         HERO / BANNER
+    ============================================================ -->
+    <section class="banner">
+        <div class="banner-bg"></div>
+        <div class="banner-particles" id="banner-particles"></div>
+        <div class="banner-overlay"></div>
+
+        <div class="banner-content">
+            <div class="banner-eyebrow">
+                <span class="banner-eyebrow-dot"></span>
+                Умен устойчив град
+            </div>
+            <h1>Открий своето<br><span class="highlight">Еко-Бъдеще</span></h1>
+            <p>Изследвайте иновациите, които правят нашия град по-зелен, по-умен и по-добър за всички.</p>
+            <button class="cta-button" id="start-btn">
+                Започни изследването
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="scroll-hint">
+            <div class="scroll-arrow"></div>
+            Превъртете надолу
+        </div>
+    </section>
+
+    <!-- ============================================================
+         CITY OVERVIEW — STATISTICS
+    ============================================================ -->
+    <section class="overview" id="overview">
+        <div class="section-container">
+            <div class="section-label">Статистики в реално време</div>
+            <h2 class="section-title">Градски показатели</h2>
+            <p class="section-subtitle">Ключови екологични метрики на нашия умен град, обновявани динамично.</p>
+
+            <div class="stats-grid" id="stats-grid">
+                <!-- Stat cards се генерират от JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         CITY MAP — INTERACTIVE GRID
+    ============================================================ -->
+    <section class="city-map" id="map">
+        <div class="section-container">
+            <div class="map-header">
+                <div class="section-label">Интерактивна карта</div>
+                <h2 class="section-title">Избери зона за изследване</h2>
+                <p class="section-subtitle">Кликни върху зона, за да научиш повече и да я добавиш в своя Зелен дневник.</p>
+            </div>
+            <div class="map-grid" id="map-grid">
+                <!-- Зоните се генерират от JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         MODAL
+    ============================================================ -->
+    <div class="modal-backdrop" id="modal-backdrop">
+        <div class="modal" id="modal" role="dialog" aria-modal="true">
+            <button class="modal-close" id="modal-close" aria-label="Затвори">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+            <div class="modal-zone-icon" id="modal-icon"></div>
+            <h2 class="modal-title" id="modal-title"></h2>
+            <p class="modal-desc" id="modal-desc"></p>
+            <div class="modal-facts">
+                <h4>Ключови факти</h4>
+                <ul id="modal-facts-list"></ul>
+            </div>
+            <button class="modal-explore-btn" id="modal-explore-btn">Добави в дневника</button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         GREEN DIARY — PROGRESS & BADGES
+    ============================================================ -->
+    <section class="green-diary" id="diary">
+        <div class="section-container">
+            <div class="diary-header">
+                <div>
+                    <div class="section-label">Твоят прогрес</div>
+                    <h2 class="section-title">Зелен дневник</h2>
+                    <p class="section-subtitle">Събирай значки, докато изследваш различни зони на умния град.</p>
+                </div>
+                <div class="diary-progress-wrap">
+                    <div class="diary-progress-label">Напредък</div>
+                    <div class="diary-progress-track">
+                        <div class="diary-progress-bar" id="diary-progress-bar"></div>
+                    </div>
+                    <div class="diary-progress-text" id="diary-progress-text">0 от 6 зони открити</div>
+                </div>
+            </div>
+
+            <div class="diary-filter" id="diary-filter">
+                <button class="filter-btn active" data-cat="all">Всички</button>
+                <button class="filter-btn" data-cat="energy">Енергия</button>
+                <button class="filter-btn" data-cat="nature">Природа</button>
+                <button class="filter-btn" data-cat="infrastructure">Инфраструктура</button>
+            </div>
+
+            <div class="diary-badges" id="diary-badges">
+                <!-- Значките се генерират от JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ECO-TIPS / VIDEOS
+    ============================================================ -->
+    <section class="eco-tips-section" id="tips">
+        <div class="section-container">
+            <div class="section-label">Обучителни ресурси</div>
+            <h2 class="section-title">Видео съвети за устойчивост</h2>
+            <p class="section-subtitle" style="margin-bottom:2rem">Научете повече за зелените технологии и устойчивия начин на живот.</p>
+
+            <div class="video-tabs" id="video-tabs">
+                <!-- Табовете се генерират от JS -->
+            </div>
+
+            <div class="video-layout">
+                <div class="video-main">
+                    <div class="video-iframe-wrap">
+                        <iframe id="main-video"
+                            src=""
+                            title="Eco Video"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="video-info">
+                        <h3 id="video-main-title"></h3>
+                        <p id="video-main-desc"></p>
+                    </div>
+                </div>
+
+                <div class="video-playlist" id="video-playlist">
+                    <!-- Плейлистата се генерира от JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FOOTER
+    ============================================================ -->
+    <footer class="app-footer">
+        <div class="footer-inner">
+            <div class="footer-logo">EcoExplorer</div>
+            <p class="footer-copy">&copy; 2026 Eco-City Explorer. Всички права запазени.<br>
+                <small style="opacity:0.7">Проект BG05SFPR001-3.005-0023-C01 | ПГКПИ Бургас</small>
+            </p>
+            <div class="footer-links">
+                <a href="#">За нас</a>
+                <a href="#">Контакти</a>
+                <a href="#">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ============================================================
+         JAVASCRIPT (script.js — включен inline за демо)
+    ============================================================ -->
+    <script>
+    /**
+     * ============================================================
+     * ECO-CITY EXPLORER — script.js
+     * ES6 модулна структура, DOM manipulation, localStorage
+     * ============================================================
+     */
+
+    // ============================================================
+    // DATA — Данни за зони, статистики, видеа и значки
+    // ============================================================
+
+    /** @type {Array} Данни за зоните на интерактивната карта */
+    const CITY_ZONES = [
+        {
+            id: 'solar',
+            name: 'Соларен парк',
+            tagline: 'Чиста слънчева енергия за целия квартал',
+            category: 'energy',
+            cssClass: 'zone-solar',
+            iconColor: '#c8a84b',
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>`,
+            description: 'Соларният парк е сърцето на енергийната система на умния град. Хиляди фотоволтаични панели преобразуват слънчевата светлина в чиста електроенергия.',
+            facts: [
+                '12 000 соларни панела с обща мощност 4.8 MW',
+                'Покрива 35% от нуждите на квартала',
+                'Намалява CO2 с 2 400 тона годишно',
+                'Автоматично ориентиране по слънцето (tracking системи)'
+            ]
+        },
+        {
+            id: 'forest',
+            name: 'Градска гора',
+            tagline: 'Зелен белодроб на нашия град',
+            category: 'nature',
+            cssClass: 'zone-forest',
+            iconColor: '#2d7a2d',
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2d7a2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 22v-3.27a3.29 3.29 0 0 0-.94-2.33l-6.06-6.06A3.29 3.29 0 0 1 9 8.06V6"/>
+                <path d="M12 22V12"/><path d="M7 22v-3.27a3.29 3.29 0 0 1 .94-2.33l4.12-4.12"/>
+                <path d="M12 2C9.24 2 7 4.24 7 7s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/>
+            </svg>`,
+            description: 'Градската гора е изкуствено залесен парк с над 5 000 дървета. Служи като естествен филтър за въздуха и място за отдих.',
+            facts: [
+                '5 200 дървета от 18 местни вида',
+                'Намалява градската температура с 3-5°C',
+                'Поглъща 180 тона CO2 годишно',
+                'Дом за 60+ вида птици и насекоми'
+            ]
+        },
+        {
+            id: 'water',
+            name: 'Водна система',
+            tagline: 'Умно управление на водните ресурси',
+            category: 'infrastructure',
+            cssClass: 'zone-water',
+            iconColor: '#2a8c7a',
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a8c7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>`,
+            description: 'Иновативна система за събиране, пречистване и рециклиране на дъждовна вода. Намалява потреблението с над 40%.',
+            facts: [
+                'Събира 2 млн. литра дъждовна вода годишно',
+                'Тристепенна система за пречистване',
+                'Намалява потреблението с 42%',
+                'IoT сензори следят качеството в реално време'
+            ]
+        },
+        {
+            id: 'recycling',
+            name: 'Рециклиращ хъб',
+            tagline: 'Нулеви отпадъци за кръгова икономика',
+            category: 'infrastructure',
+            cssClass: 'zone-recycling',
+            iconColor: '#7ab648',
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#7ab648" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/>
+                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+            </svg>`,
+            description: 'Модерен хъб за разделно събиране и преработка на отпадъци. Умни контейнери с IoT сензори оптимизират транспорта.',
+            facts: [
+                '78% от отпадъците се рециклират',
+                'Умни контейнери с 12 категории',
+                'Намалява депонирането с 3 400 тона/год.',
+                'Биоразградимите отпадъци се превръщат в компост'
+            ]
+        },
+        {
+            id: 'transport',
+            name: 'Еко-транспорт',
+            tagline: 'Електрически и споделен транспорт',
+            category: 'infrastructure',
+            cssClass: 'zone-transport',
+            iconColor: '#2a8c7a',
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a8c7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>`,
+            description: 'Мрежа от електрически автобуси, споделени велосипеди и зарядни станции. Безвъглероден транспорт за всички граждани.',
+            facts: [
+                '45 електрически автобуса в мрежата',
+                '800 станции за споделени велосипеди',
+                '120 бързи зарядни точки за EV',
+                'Намалява трафика с 28%'
+            ]
+        },
+        {
+            id: 'gardens',
+            name: 'Вертикални градини',
+            tagline: 'Земеделие в сърцето на града',
+            category: 'nature',
+            cssClass: 'zone-gardens',
+            iconColor: '#2d7a2d',
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2d7a2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22V12m0 0c0-5.5-7-7-7-7s1.5 7 7 7zm0 0c0-5.5 7-7 7-7s-1.5 7-7 7z"/>
+            </svg>`,
+            description: 'Иновативни вертикални градини по фасадите на сградите. Произвеждат пресни зеленчуци и подобряват изолацията.',
+            facts: [
+                '64 сгради с вертикални градини',
+                'Произвеждат 48 тона зеленчуци годишно',
+                'Намаляват нуждата от отопление с 15%',
+                'Хидропонни системи без почва и пестициди'
+            ]
+        }
+    ];
+
+    /** @type {Array} Статистически карти */
+    const CITY_STATS = [
+        {
+            id: 'energy',
+            label: 'Възобновяема енергия',
+            value: 73,
+            unit: '%',
+            delta: '+8% спрямо миналата година',
+            trend: 'up',
+            barTarget: 73,
+            iconColor: '#c8a84b',
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>`
+        },
+        {
+            id: 'air',
+            label: 'Чистота на въздуха',
+            value: 91,
+            unit: '/100',
+            delta: 'Отличен индекс',
+            trend: 'up',
+            barTarget: 91,
+            iconColor: '#2a8c7a',
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a8c7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+            </svg>`
+        },
+        {
+            id: 'recycling',
+            label: 'Рециклиране',
+            value: 78,
+            unit: '%',
+            delta: '+12% от 2024',
+            trend: 'up',
+            barTarget: 78,
+            iconColor: '#7ab648',
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#7ab648" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/>
+                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+            </svg>`
+        },
+        {
+            id: 'co2',
+            label: 'Намалени емисии',
+            value: 34,
+            unit: '%',
+            delta: 'Цел: 50% до 2030',
+            trend: 'up',
+            barTarget: 34,
+            iconColor: '#b85a2a',
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#b85a2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+                <polyline points="16 7 22 7 22 13"/>
+            </svg>`
+        }
+    ];
+
+    /** @type {Array} Видео данни */
+    const VIDEO_TOPICS = [
+        {
+            id: 'solar',
+            label: 'Соларна енергия',
+            videos: [
+                {
+                    id: 'inLeRqmVDYE',
+                    title: 'Как работят соларните панели',
+                    desc: 'Разбери принципа на фотоволтаичното преобразуване на енергия.',
+                    duration: '8:32'
+                },
+                {
+                    id: '3lMHDS49yMc',
+                    title: 'Соларни системи за дома',
+                    desc: 'Практическо ръководство за домашни соларни инсталации.',
+                    duration: '11:15'
+                }
+            ]
+        },
+        {
+            id: 'urban',
+            label: 'Зелен град',
+            videos: [
+                {
+                    id: 'XBmAvMQFMjA',
+                    title: 'Умни градове на бъдещето',
+                    desc: 'Как технологиите трансформират градската среда.',
+                    duration: '14:08'
+                },
+                {
+                    id: 'W3wHJUZE8wM',
+                    title: 'Вертикалните градини',
+                    desc: 'Земеделие в сърцето на метрополиса.',
+                    duration: '7:45'
+                }
+            ]
+        },
+        {
+            id: 'recycling',
+            label: 'Рециклиране',
+            videos: [
+                {
+                    id: 'OasbYWF4_S8',
+                    title: 'Пластмасата и океаните',
+                    desc: 'Влиянието на пластмасата и как да го намалим.',
+                    duration: '9:20'
+                },
+                {
+                    id: 'iFoMfHLa_8s',
+                    title: 'Кръговата икономика',
+                    desc: 'Принципите на нулевото производство на отпадъци.',
+                    duration: '6:55'
+                }
+            ]
+        }
+    ];
+
+    // ============================================================
+    // STATE — Глобално състояние
+    // ============================================================
+    let exploredZones = new Set(); // Отключени зони
+    let currentModalZone = null;   // Текуща отворена зона в modal
+    let currentFilter = 'all';     // Текущ филтър в дневника
+    let currentTopic = null;       // Текуща видео тема
+
+    // ============================================================
+    // UTILITY FUNCTIONS — Помощни функции
+    // ============================================================
+
+    /**
+     * Показва toast нотификация
+     * @param {string} title - Заглавие
+     * @param {string} message - Съобщение
+     */
+    function showToast(title, message) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `<div class="toast-title">${title}</div>${message}`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 300);
+        }, 3200);
+    }
+
+    /**
+     * Анимира числова стойност от 0 до target
+     * @param {HTMLElement} el - Целеви елемент
+     * @param {number} target - Крайна стойност
+     * @param {string} suffix - Суфикс (%, /100 и т.н.)
+     * @param {number} duration - Продължителност в ms
+     */
+    function animateCounter(el, target, suffix, duration = 1600) {
+        const start = performance.now();
+        const update = (now) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+            el.textContent = Math.round(eased * target) + suffix;
+            if (progress < 1) requestAnimationFrame(update);
+        };
+        requestAnimationFrame(update);
+    }
+
+    // ============================================================
+    // MODULE 1: ECO-MODE (Тъмна тема + localStorage)
+    // ============================================================
+
+    /**
+     * Прилага темата към документа
+     * @param {string} theme - 'light' | 'dark'
+     */
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('eco-city-theme', theme);
+    }
+
+    /** Инициализира Eco-Mode от localStorage */
+    function initEcoMode() {
+        const saved = localStorage.getItem('eco-city-theme') || 'light';
+        applyTheme(saved);
+
+        const btn = document.getElementById('eco-toggle');
+        btn.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            showToast(
+                next === 'dark' ? 'Eco Mode ON' : 'Eco Mode OFF',
+                next === 'dark'
+                    ? 'Тъмната тема е активирана. По-малко светлина = по-малко енергия!'
+                    : 'Върнахте се към светлата тема.'
+            );
+        });
+    }
+
+    // ============================================================
+    // MODULE 2: HAMBURGER MENU
+    // ============================================================
+
+    /** Инициализира hamburger менюто */
+    function initHamburger() {
+        const nav = document.getElementById('nav');
+        const hamburger = document.getElementById('hamburger');
+
+        hamburger.addEventListener('click', () => {
+            nav.classList.toggle('active');
+            hamburger.setAttribute('aria-expanded', nav.classList.contains('active'));
+        });
+
+        // Затваря при клик на линк
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => nav.classList.remove('active'));
+        });
+    }
+
+    // ============================================================
+    // MODULE 3: HERO BUTTON — Плавна навигация
+    // ============================================================
+
+    /** Инициализира бутона в Hero секцията */
+    function initHeroButton() {
+        document.getElementById('start-btn').addEventListener('click', () => {
+            document.getElementById('map').scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+    // ============================================================
+    // MODULE 4: BANNER PARTICLES — Декоративни частици
+    // ============================================================
+
+    /** Генерира анимирани частици в Hero секцията */
+    function initParticles() {
+        const container = document.getElementById('banner-particles');
+        const count = 18;
+
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.bottom = Math.random() * 40 + '%';
+            p.style.animationDelay = Math.random() * 5 + 's';
+            p.style.animationDuration = (3 + Math.random() * 4) + 's';
+            p.style.width = p.style.height = (3 + Math.random() * 5) + 'px';
+            p.style.opacity = '0';
+            container.appendChild(p);
+        }
+    }
+
+    // ============================================================
+    // MODULE 5: CITY STATS — Динамично зареждане при load
+    // ============================================================
+
+    /** Генерира и анимира картите със статистики */
+    function initCityStats() {
+        const grid = document.getElementById('stats-grid');
+        grid.innerHTML = '';
+
+        CITY_STATS.forEach(stat => {
+            const card = document.createElement('div');
+            card.className = 'stat-card';
+            card.innerHTML = `
+                <div class="stat-icon">${stat.icon}</div>
+                <h3>${stat.label}</h3>
+                <div class="stat-value">
+                    <span class="stat-counter">0</span><span class="unit">${stat.unit}</span>
+                </div>
+                <div class="stat-bar-wrap">
+                    <div class="stat-bar" data-target="${stat.barTarget}"></div>
+                </div>
+                <div class="stat-delta ${stat.trend}">${stat.trend === 'up' ? '+' : ''}${stat.delta}</div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    /** Задейства анимациите на статистиките при scroll в зоната */
+    function animateStats() {
+        const cards = document.querySelectorAll('.stat-card');
+        CITY_STATS.forEach((stat, i) => {
+            const counter = cards[i]?.querySelector('.stat-counter');
+            const bar = cards[i]?.querySelector('.stat-bar');
+            if (counter) animateCounter(counter, stat.value, '', 1800);
+            if (bar) {
+                setTimeout(() => {
+                    bar.style.width = stat.barTarget + '%';
+                }, 200);
+            }
+        });
+    }
+
+    // ============================================================
+    // MODULE 6: CITY MAP — Интерактивна мрежа от зони
+    // ============================================================
+
+    /** Генерира мрежата от зони */
+    function renderMapGrid() {
+        const grid = document.getElementById('map-grid');
+        grid.innerHTML = '';
+
+        CITY_ZONES.forEach(zone => {
+            const div = document.createElement('div');
+            div.className = `map-zone ${zone.cssClass}`;
+            div.dataset.id = zone.id;
+            if (exploredZones.has(zone.id)) div.classList.add('explored');
+
+            div.innerHTML = `
+                <div class="zone-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </div>
+                <div class="zone-icon-wrap">${zone.icon}</div>
+                <div class="zone-name">${zone.name}</div>
+                <div class="zone-tagline">${zone.tagline}</div>
+            `;
+
+            div.addEventListener('click', () => openZoneModal(zone));
+            grid.appendChild(div);
+        });
+    }
+
+    // ============================================================
+    // MODULE 7: MODAL — Изскачащ панел за зоните
+    // ============================================================
+
+    /**
+     * Отваря modal за конкретна зона
+     * @param {Object} zone - Данни за зоната
+     */
+    function openZoneModal(zone) {
+        currentModalZone = zone;
+
+        const iconEl = document.getElementById('modal-icon');
+        iconEl.innerHTML = zone.icon;
+        iconEl.style.background = zone.iconColor + '22';
+
+        document.getElementById('modal-title').textContent = zone.name;
+        document.getElementById('modal-desc').textContent = zone.description;
+
+        const factsList = document.getElementById('modal-facts-list');
+        factsList.innerHTML = zone.facts.map(f => `<li>${f}</li>`).join('');
+
+        const exploreBtn = document.getElementById('modal-explore-btn');
+        if (exploredZones.has(zone.id)) {
+            exploreBtn.textContent = 'Вече добавена в дневника';
+            exploreBtn.disabled = true;
+        } else {
+            exploreBtn.textContent = 'Добави в дневника';
+            exploreBtn.disabled = false;
+        }
+
+        const backdrop = document.getElementById('modal-backdrop');
+        backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    /** Затваря modal */
+    function closeModal() {
+        const backdrop = document.getElementById('modal-backdrop');
+        backdrop.classList.remove('open');
+        document.body.style.overflow = '';
+        currentModalZone = null;
+    }
+
+    /** Инициализира modal събитията */
+    function initModal() {
+        document.getElementById('modal-close').addEventListener('click', closeModal);
+        document.getElementById('modal-backdrop').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        document.getElementById('modal-explore-btn').addEventListener('click', () => {
+            if (!currentModalZone) return;
+            exploreZone(currentModalZone);
+            closeModal();
+        });
+    }
+
+    /**
+     * Добавя зона в дневника
+     * @param {Object} zone - Зона за добавяне
+     */
+    function exploreZone(zone) {
+        if (exploredZones.has(zone.id)) return;
+
+        exploredZones.add(zone.id);
+        saveProgress();
+        renderMapGrid();
+        updateDiary();
+        updateProgressBar();
+
+        showToast(
+            'Зона открита!',
+            `"${zone.name}" беше добавена в твоя Зелен дневник.`
+        );
+
+        // Ако всички зони са открити
+        if (exploredZones.size === CITY_ZONES.length) {
+            setTimeout(() => {
+                showToast('Поздравления!', 'Открихте всички зони! Вие сте истински Еко-Изследовател!');
+            }, 1500);
+        }
+    }
+
+    // ============================================================
+    // MODULE 8: PROGRESS — localStorage + дневник
+    // ============================================================
+
+    /** Запазва прогреса в localStorage */
+    function saveProgress() {
+        localStorage.setItem('eco-city-explored', JSON.stringify([...exploredZones]));
+    }
+
+    /** Зарежда прогреса от localStorage */
+    function loadProgress() {
+        const saved = localStorage.getItem('eco-city-explored');
+        if (saved) {
+            try {
+                const arr = JSON.parse(saved);
+                exploredZones = new Set(arr);
+            } catch (e) {
+                exploredZones = new Set();
+            }
+        }
+    }
+
+    /** Обновява прогрес бара */
+    function updateProgressBar() {
+        const total = CITY_ZONES.length;
+        const found = exploredZones.size;
+        const pct = (found / total) * 100;
+
+        const bar = document.getElementById('diary-progress-bar');
+        const text = document.getElementById('diary-progress-text');
+
+        if (bar) bar.style.width = pct + '%';
+        if (text) text.textContent = `${found} от ${total} зони открити`;
+    }
+
+    // ============================================================
+    // MODULE 9: GREEN DIARY — Значки и филтри
+    // ============================================================
+
+    /** Рендира значките в дневника */
+    function updateDiary() {
+        const container = document.getElementById('diary-badges');
+        if (!container) return;
+
+        const filtered = currentFilter === 'all'
+            ? CITY_ZONES
+            : CITY_ZONES.filter(z => z.category === currentFilter);
+
+        container.innerHTML = '';
+
+        filtered.forEach(zone => {
+            const unlocked = exploredZones.has(zone.id);
+            const card = document.createElement('div');
+            card.className = `badge-card${unlocked ? ' unlocked' : ''}`;
+            card.dataset.cat = zone.category;
+
+            card.innerHTML = `
+                <div class="badge-icon" style="background:${zone.iconColor}22">${zone.icon}</div>
+                <div>
+                    <div class="badge-name">${zone.name}</div>
+                    <div class="badge-status">${unlocked ? 'Открита!' : 'Не е открита'}</div>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+    }
+
+    /** Инициализира бутоните за филтриране */
+    function initDiaryFilters() {
+        const filterContainer = document.getElementById('diary-filter');
+        if (!filterContainer) return;
+
+        filterContainer.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('filter-btn')) return;
+
+            filterContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+
+            currentFilter = e.target.dataset.cat;
+            updateDiary();
+        });
+    }
+
+    // ============================================================
+    // MODULE 10: VIDEO SECTION — Динамична смяна на видеа
+    // ============================================================
+
+    /** Рендира видео секцията */
+    function initVideos() {
+        currentTopic = VIDEO_TOPICS[0];
+        renderVideoTabs();
+        loadTopic(currentTopic);
+    }
+
+    /** Генерира табовете за видео темите */
+    function renderVideoTabs() {
+        const tabsEl = document.getElementById('video-tabs');
+        tabsEl.innerHTML = '';
+
+        VIDEO_TOPICS.forEach((topic, idx) => {
+            const btn = document.createElement('button');
+            btn.className = `video-tab${idx === 0 ? ' active' : ''}`;
+            btn.textContent = topic.label;
+            btn.dataset.id = topic.id;
+
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.video-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTopic = topic;
+                loadTopic(topic);
+            });
+
+            tabsEl.appendChild(btn);
+        });
+    }
+
+    /**
+     * Зарежда конкретна видео тема
+     * @param {Object} topic - Темата за зареждане
+     */
+    function loadTopic(topic) {
+        if (!topic.videos.length) return;
+        loadVideo(topic.videos[0], topic);
+        renderPlaylist(topic);
+    }
+
+    /**
+     * Зарежда конкретно видео в главния плейър
+     * @param {Object} video - Видео обект
+     * @param {Object} topic - Текущата тема
+     */
+    function loadVideo(video, topic) {
+        const iframe = document.getElementById('main-video');
+        const titleEl = document.getElementById('video-main-title');
+        const descEl = document.getElementById('video-main-desc');
+
+        iframe.src = `https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`;
+        if (titleEl) titleEl.textContent = video.title;
+        if (descEl) descEl.textContent = video.desc;
+
+        // Обнови активен елемент в плейлистата
+        document.querySelectorAll('.playlist-item').forEach(item => {
+            item.classList.toggle('active', item.dataset.vid === video.id);
+        });
+    }
+
+    /**
+     * Рендира плейлистата за дадена тема
+     * @param {Object} topic - Темата
+     */
+    function renderPlaylist(topic) {
+        const playlistEl = document.getElementById('video-playlist');
+        playlistEl.innerHTML = '';
+
+        topic.videos.forEach((video, idx) => {
+            const item = document.createElement('div');
+            item.className = `playlist-item${idx === 0 ? ' active' : ''}`;
+            item.dataset.vid = video.id;
+
+            item.innerHTML = `
+                <div class="playlist-thumb">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="playlist-title">${video.title}</div>
+                    <div class="playlist-dur">${video.duration}</div>
+                </div>
+            `;
+
+            item.addEventListener('click', () => {
+                loadVideo(video, topic);
+                renderPlaylist(topic);
+                idx === 0 || document.querySelectorAll('.playlist-item')[idx]?.classList.add('active');
+            });
+
+            playlistEl.appendChild(item);
+        });
+    }
+
+    // ============================================================
+    // INTERSECTION OBSERVER — Анимации при scroll
+    // ============================================================
+
+    /** Наблюдава секциите и задейства анимации при влизане в изгледа */
+    function initScrollObserver() {
+        let statsAnimated = false;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const section = entry.target;
+
+                    if (section.id === 'overview' && !statsAnimated) {
+                        statsAnimated = true;
+                        animateStats();
+                    }
+
+                    if (section.id === 'diary') {
+                        updateProgressBar();
+                    }
+                }
+            });
+        }, { threshold: 0.2 });
+
+        const sectionsToWatch = ['overview', 'map', 'diary', 'tips'];
+        sectionsToWatch.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
+        });
+    }
+
+    // ============================================================
+    // INIT — Инициализация при зареждане
+    // ============================================================
+
+    window.addEventListener('load', () => {
+        // Зарежда запазения прогрес от localStorage
+        loadProgress();
+
+        // Инициализира всички модули
+        initEcoMode();
+        initHamburger();
+        initHeroButton();
+        initParticles();
+        initCityStats();
+        renderMapGrid();
+        initModal();
+        updateDiary();
+        updateProgressBar();
+        initDiaryFilters();
+        initVideos();
+        initScrollObserver();
+    });
+
+    </script>
+</body>
+</html>
