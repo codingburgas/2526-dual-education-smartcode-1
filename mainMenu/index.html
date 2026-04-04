@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="bg" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../mainMenu/MainMenu.css">
+    <title>Eco-City Explorer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="../assets/logo.png" type="image/x-icon">
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+    ============================================================ -->
+    <header class="app-header">
+
+        <nav id="nav">
+            <a href="#map">Explore</a>
+            <a href="#map">City Map</a>
+            <a href="#diary">Green Diary</a>
+            <a href="#tips">Resources</a>
+        </nav>
+
+        <div class="header-actions">
+            <button class="eco-toggle" id="eco-toggle" title="Eco Mode - Тъмна тема">
+                <span class="eco-toggle-indicator" id="eco-indicator"></span>
+                Eco Mode
+            </button>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">&#9776;</button>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         HERO / BANNER
+    ============================================================ -->
+    <section class="banner">
+        <div class="banner-bg"></div>
+        <div class="banner-particles" id="banner-particles"></div>
+        <div class="banner-overlay"></div>
+
+        <div class="banner-content">
+            <div class="banner-eyebrow">
+                <span class="banner-eyebrow-dot"></span>
+                Умен устойчив град
+            </div>
+            <h1>Открий своето<br><span class="highlight">Еко-Бъдеще</span></h1>
+            <p>Изследвайте иновациите, които правят нашия град по-зелен, по-умен и по-добър за всички.</p>
+         <a href="../Map/map.html" class="cta-button">
+    Започни изследването
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+    </svg>
+</a>
+        </div>
+
+        <div class="scroll-hint">
+            <div class="scroll-arrow"></div>
+            Превъртете надолу
+        </div>
+    </section>
+
+    <!-- ============================================================
+         CITY OVERVIEW — STATISTICS
+    ============================================================ -->
+    <section class="overview" id="overview">
+        <div class="section-container">
+            <div class="section-label">Статистики в реално време</div>
+            <h2 class="section-title">Градски показатели</h2>
+            <p class="section-subtitle">Ключови екологични метрики на нашия умен град, обновявани динамично.</p>
+
+            <div class="stats-grid" id="stats-grid">
+                <!-- Stat cards се генерират от JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         CITY MAP — INTERACTIVE GRID
+    ============================================================ -->
+    <section class="city-map" id="map">
+        <div class="section-container">
+            <div class="map-header">
+                <div class="section-label">Интерактивна карта</div>
+                <h2 class="section-title">Избери зона за изследване</h2>
+                <p class="section-subtitle">Кликни върху зона, за да научиш повече и да я добавиш в своя Зелен дневник.</p>
+            </div>
+            <div class="map-grid" id="map-grid">
+                <!-- Зоните се генерират от JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         MODAL
+    ============================================================ -->
+    <div class="modal-backdrop" id="modal-backdrop">
+        <div class="modal" id="modal" role="dialog" aria-modal="true">
+            <button class="modal-close" id="modal-close" aria-label="Затвори">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+            <div class="modal-zone-icon" id="modal-icon"></div>
+            <h2 class="modal-title" id="modal-title"></h2>
+            <p class="modal-desc" id="modal-desc"></p>
+            <div class="modal-facts">
+                <h4>Ключови факти</h4>
+                <ul id="modal-facts-list"></ul>
+            </div>
+            <button class="modal-explore-btn" id="modal-explore-btn">Добави в дневника</button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         GREEN DIARY — PROGRESS & BADGES
+    ============================================================ -->
+    <section class="green-diary" id="diary">
+        <div class="section-container">
+            <div class="diary-header">
+                <div>
+                    <div class="section-label">Твоят прогрес</div>
+                    <h2 class="section-title">Зелен дневник</h2>
+                    <p class="section-subtitle">Събирай значки, докато изследваш различни зони на умния град.</p>
+                </div>
+                <div class="diary-progress-wrap">
+                    <div class="diary-progress-label">Напредък</div>
+                    <div class="diary-progress-track">
+                        <div class="diary-progress-bar" id="diary-progress-bar"></div>
+                    </div>
+                    <div class="diary-progress-text" id="diary-progress-text">0 от 6 зони открити</div>
+                </div>
+            </div>
+
+            <div class="diary-filter" id="diary-filter">
+                <button class="filter-btn active" data-cat="all">Всички</button>
+                <button class="filter-btn" data-cat="energy">Енергия</button>
+                <button class="filter-btn" data-cat="nature">Природа</button>
+                <button class="filter-btn" data-cat="infrastructure">Инфраструктура</button>
+            </div>
+
+            <div class="diary-badges" id="diary-badges">
+                <!-- Значките се генерират от JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ECO-TIPS / VIDEOS
+    ============================================================ -->
+    <section class="eco-tips-section" id="tips">
+        <div class="section-container">
+            <div class="section-label">Обучителни ресурси</div>
+            <h2 class="section-title">Видео съвети за устойчивост</h2>
+            <p class="section-subtitle" style="margin-bottom:2rem">Научете повече за зелените технологии и устойчивия начин на живот.</p>
+
+            <div class="video-tabs" id="video-tabs">
+                <!-- Табовете се генерират от JS -->
+            </div>
+
+            <div class="video-layout">
+                <div class="video-main">
+                    <div class="video-iframe-wrap">
+                        <iframe id="main-video"
+                            src=""
+                            title="Eco Video"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="video-info">
+                        <h3 id="video-main-title"></h3>
+                        <p id="video-main-desc"></p>
+                    </div>
+                </div>
+
+                <div class="video-playlist" id="video-playlist">
+                    <!-- Плейлистата се генерира от JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FOOTER
+    ============================================================ -->
+    <footer class="app-footer">
+        <div class="footer-inner">
+            <div class="footer-logo">EcoExplorer</div>
+            <p class="footer-copy">&copy; 2026 Eco-City Explorer. Всички права запазени.<br>
+                <small style="opacity:0.7">Проект BG05SFPR001-3.005-0023-C01 | ПГКПИ Бургас</small>
+            </p>
+            <div class="footer-links">
+                <a href="#">За нас</a>
+                <a href="#">Контакти</a>
+                <a href="#">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+    <script src="../mainMenu/MainMenu.js"></script>
+   
+</body>
+</html>

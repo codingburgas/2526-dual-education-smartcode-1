@@ -1,0 +1,122 @@
+/* ===========================
+   CITY MAP SECTION
+=========================== */
+.city-map {
+    padding: 4rem 2rem;
+    background: var(--bg-secondary);
+}
+
+.city-map .section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Map Grid */
+.map-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Map Zones */
+.map-zone {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-color);
+    border-radius: 20px;
+    padding: 1.75rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), 
+                box-shadow 0.3s, border-color 0.3s;
+}
+
+.map-zone:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--shadow-md);
+    border-color: transparent;
+}
+
+/* Zone Overlay Gradients */
+.map-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 20px;
+}
+
+.zone-solar::before { background: radial-gradient(circle at 30% 30%, rgba(200,168,75,0.12), transparent 70%); }
+.zone-forest::before { background: radial-gradient(circle at 30% 30%, rgba(45,122,45,0.12), transparent 70%); }
+.zone-water::before { background: radial-gradient(circle at 30% 30%, rgba(42,140,122,0.12), transparent 70%); }
+.zone-recycling::before { background: radial-gradient(circle at 30% 30%, rgba(122,182,72,0.12), transparent 70%); }
+.zone-transport::before { background: radial-gradient(circle at 30% 30%, rgba(42,140,122,0.1), transparent 70%); }
+.zone-gardens::before { background: radial-gradient(circle at 30% 30%, rgba(45,122,45,0.1), transparent 70%); }
+
+.map-zone:hover::before { opacity: 1; }
+
+/* Zone Icon */
+.zone-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.map-zone:hover .zone-icon-wrap {
+    transform: scale(1.1) rotate(-4deg);
+}
+
+/* Zone Colors */
+.zone-solar .zone-icon-wrap { background: rgba(200,168,75,0.15); }
+.zone-forest .zone-icon-wrap { background: rgba(45,122,45,0.15); }
+.zone-water .zone-icon-wrap { background: rgba(42,140,122,0.15); }
+.zone-recycling .zone-icon-wrap { background: rgba(122,182,72,0.15); }
+.zone-transport .zone-icon-wrap { background: rgba(42,140,122,0.12); }
+.zone-gardens .zone-icon-wrap { background: rgba(45,122,45,0.12); }
+
+.zone-icon-wrap svg { width: 26px; height: 26px; }
+
+/* Zone Text */
+.zone-name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+.zone-tagline {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* Badge */
+.zone-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-lime);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-zone.explored .zone-badge { display: flex; }
+.zone-badge svg { width: 12px; height: 12px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .map-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
