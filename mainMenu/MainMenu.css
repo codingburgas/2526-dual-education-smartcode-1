@@ -77,7 +77,35 @@
             pointer-events: none;
             z-index: 0;
         }
+        /* --- NEW SMALL LOGO STYLES (top left) --- */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
 
+        .small-logo {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            display: block;
+            border-radius: 50%;
+            padding: 6px;
+            transition: transform 0.2s ease;
+            z-index: 1001;
+            position: fixed;
+        }
+
+        .small-logo:hover {
+            transform: scale(1.02);
+        }
+
+        /* Keep the original .logo div if needed for spacing but we replace content */
+        .logo {
+            display: flex;
+            align-items: center;
+        }
         /* ============================================================
            HEADER / NAVIGATION
         ============================================================ */
@@ -102,44 +130,6 @@
         /* ============================================================
    LOGO (PNG VERSION)
 ============================================================ */
-
-.logo {
-    font-family: 'Playfair Display', serif;
-    font-weight: 900;
-    font-size: 1.5rem;
-    color: var(--accent-green);
-    letter-spacing: -0.02em;
-
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-
-/* PNG image */
-.logo-img {
-    width: 34px;
-    height: 34px;
-    object-fit: contain;
-    display: block;
-
-    transition: transform 0.3s ease, filter 0.3s ease;
-}
-
-/* Hover effect */
-.logo:hover .logo-img {
-    transform: rotate(-8deg) scale(1.1);
-    filter: drop-shadow(0 4px 8px rgba(45,122,45,0.3));
-}
-
-/* Optional: text hover */
-.logo:hover {
-    color: var(--accent-lime);
-}
-
-/* Dark mode fix (ако логото е тъмно) */
-[data-theme="dark"] .logo-img {
-    filter: brightness(1.2) contrast(1.1);
-}
 
         nav#nav {
             display: flex;

@@ -1,54 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Green Motion Crew – Areas Needing Reforestation</title>
-    <link rel="stylesheet" href="../Map/map.css">
+    <title>Green Motion Crew – Map</title>
     <link rel="icon" href="../assets/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="map.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- ============================================================
+         HEADER
+    ============================================================ -->
+    <header class="app-header">
+         <!-- SMALL LOGO (top left) added here as a visible image element -->
+            <div class="logo-container">
+             <img class="small-logo" src="../assets/logo.png" alt="Green Motion Crew Logo" onerror="this.onerror=null; this.src='https://placehold.co/42x42/e0ecdb/2c5e2a?text=🌿';">
+          
+                <div class="logo" style="display: none;"></div>
+            </div>
+ 
+        <nav id="nav">
+            <a href="../mainMenu/index.html">Home</a>
+            <a href="../map/map.html">City Map</a>
+            <a href="#diary">Green Diary</a>
+            <a href="#tips">Resources</a>
+        </nav>
 
-<header>
-    <nav class="navbar" role="navigation" aria-label="Main Navigation">
-        <div class="logo">
-            <a href="../mainMenu/index.html"><img src="../assets/logo.png" alt="Green Motion Crew Logo"></a>
+        <div class="header-actions">
+            <button class="eco-toggle" id="eco-toggle" title="Eco Mode - Тъмна тема">
+                <span class="eco-toggle-indicator" id="eco-indicator"></span>
+                Eco Mode
+            </button>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">&#9776;</button>
         </div>
+    </header>
+    <!-- ============================================================
+         MAP SECTION
+    ============================================================ -->
+    <section class="city-map" id="map">
+        <div class="section-container">
+            <div class="map-header">
+                <div class="section-label">Интерактивна карта</div>
+                <h2 class="section-title">Разгледай зоните</h2>
+                <p class="section-subtitle">Използвай картата, за да откриваш и изследваш различни райони на града.</p>
+            </div>
+            <div class="map-container">
+                <iframe 
+                    src="https://umap.openstreetmap.fr/en/map/anonymous-edit/1386982:OfnVA1LDi32EInG_lHiJK57UdLcbfw2oI0reBtcq8s0" 
+                    loading="lazy" 
+                    title="Green Motion Crew Map">
+                </iframe>
+            </div>
+        </div>
+    </section>
 
-        <ul class="nav-links">
-            <li><a href="../mainMenu/index.html">Home</a></li>
-        </ul>
-
-        <button class="nav-toggle" aria-label="Toggle Navigation">
-            ☰
-        </button>
-    </nav>
-</header>
-
-<section id="home" class="home-section">
-    <h1>🌲 Green Motion Crew – Areas Needing Reforestation</h1>
-    <p>The map below shows tree-planting foundations in major Bulgarian cities.</p>
-    <a href="donate.html" class="donate-button">Donate Now</a>
-</section>
-
-<section id="map" class="map-section">
-    <div class="map-container">
-        <iframe 
-            src="https://umap.openstreetmap.fr/en/map/anonymous-edit/1324808:LfOEm092SnWvF5CBtnuiWHq04e-TURnSleOg69NLs6g" 
-            title="Reforestation Map of Bulgaria" 
-            loading="lazy"></iframe>
-    </div>
-</section>
-
-<button id="back-to-top" title="Back to top">⬆️</button>
-
-<footer class="footer">
-  <div class="footer-img">
-    <img src="../assets/logo.png" alt="Green Motion Crew logo in footer">
-  </div>
-  <small>&copy; 2025 Green Motion Crew | Life in Motion. All Rights Reserved.</small>
-</footer>
-
-<script src="../Map/map.js"></script>
+    <script src="map.js"></script>
 </body>
 </html>

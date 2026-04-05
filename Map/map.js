@@ -1,48 +1,31 @@
-// ===========================
-// NAV TOGGLE FOR MOBILE
-// ===========================
-const navToggle = document.querySelector('.nav-toggle');
-const navLinks = document.querySelector('.nav-links');
+// map.js
 
-navToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-});
+// Grab elements
+const ecoButton = document.getElementById('eco-toggle');
+const ecoIndicator = document.getElementById('eco-indicator');
+const html = document.documentElement;
 
-// ===========================
-// BACK TO TOP BUTTON
-// ===========================
-const backToTop = document.getElementById('back-to-top');
+// Initialize theme from localStorage or default to light
+const savedTheme = localStorage.getItem('theme') || 'light';
+html.setAttribute('data-theme', savedTheme);
+updateIndicator(savedTheme);
 
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 400) {
-        backToTop.style.display = 'block';
+// Function to move the indicator based on theme
+function updateIndicator(theme) {
+    if (theme === 'dark') {
+        ecoIndicator.style.transform = 'translateX(24px)'; // move to right
+        ecoIndicator.style.background = '#fff';
     } else {
-        backToTop.style.display = 'none';
+        ecoIndicator.style.transform = 'translateX(0)';
+        ecoIndicator.style.background = '#0a160a';
     }
-});
+}
 
-backToTop.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-// ===========================
-// OPTIONAL: LIGHT/DARK THEME TOGGLE
-// ===========================
-
-const themeToggle = document.createElement('button');
-themeToggle.textContent = "🌙";
-themeToggle.style.position = "fixed";
-themeToggle.style.bottom = "6rem";
-themeToggle.style.right = "2rem";
-themeToggle.style.padding = "0.6rem 1rem";
-themeToggle.style.borderRadius = "50px";
-themeToggle.style.border = "none";
-themeToggle.style.background = "var(--accent-green)";
-themeToggle.style.color = "#fff";
-themeToggle.style.cursor = "pointer";
-document.body.appendChild(themeToggle);
-
-themeToggle.addEventListener('click', () => {
-    document.documentElement.dataset.theme =
-        document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+// Click event toggles theme
+ecoButton.addEventListener('click', () => {
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', newTheme);
+    updateIndicator(newTheme);
+    localStorage.setItem('theme', newTheme);
 });
